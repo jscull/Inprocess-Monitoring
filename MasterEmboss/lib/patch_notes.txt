@@ -1,0 +1,19 @@
+Redesigned part of functionality for new PC
+Fixed another email error + resized
+Fixed email error
+Fixed cropping bug
+Bug fix with Page swapping to early + patched email
+Fixed invalid parameters error from FFMPEG
+Moved bitmap location
+Compiled app, bug fixes
+General Bug fixes & maintenance
+Updated Email Script
+Modified Email script & bug fixes + validation
+Added email script and window
+Validation fixes and other minor bug fixes
+Patching global operations
+Added progress bar support
+Added Dialog windows
+Added new menu bar feature
+Minor bug fixes
+First release!
