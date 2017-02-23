@@ -1,10 +1,10 @@
 import os, re
-import shutil
 import subprocess
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
+from shutil import copy
 
 class window(tk.Tk):
 	def __init__(self):
@@ -31,16 +31,16 @@ class window(tk.Tk):
 		self.run.grid(row=2, column=1, padx=2, pady=5)
 
 	def get_dir(self, pk):
-		directory = tk.filedialog.askdirectory()
+		directory = tk.filedialog.askopenfile()
 		if pk == 1:
 			self.entry_one.config(state='normal')
 			self.entry_one.delete(0, 'end')
-			self.entry_one.insert('end', directory)
+			self.entry_one.insert('end', directory.name)
 			self.entry_one.config(state='readonly')
 		elif pk == 2:
 			self.entry_two.config(state='normal')
 			self.entry_two.delete(0, 'end')
-			self.entry_two.insert('end', directory)
+			self.entry_two.insert('end', directory.name)
 			self.entry_two.config(state='readonly')
 		# FINISH OFF GUI MAKE IT GRID LAYOUT, TAKE THE WHOLE PATH WITH ASKFILE
 		# MOVE THE FILE TO THE VIDJOIN DIR AND TRY TO PURGE ALL TEMP FILE AFTER JOIN
@@ -49,9 +49,16 @@ class window(tk.Tk):
 		dir1 = self.entry_one.get()
 		dir2 = self.entry_two.get()
 
+		wd = os.path.expanduser('~\Documents\VidJoin')
+		if os.path.exists(wd) is False:
+			os.mkdir(wd)
+
 		output_name = outname
+
+		ffmpegdir = 'C:\\Program Files\\FFMPEG'
+		if os.path.exists(ffmpegdir) is False:
+			print('FFMPEG Not detected, please install and place into Program Files to get this to work.\nExample: {}.'.format(ffmpegdir))
 		ffmpeg = "C:\\Program Files\\FFMPEG\\bin\\ffmpeg.exe"
-		#command  = 'copy /b "{}" + "{}" {}.mp4'.format(dir1, dir2, output_name)
 
 		file1_name = dir1.split('\\')[-1]
 		file2_name = dir2.split('\\')[-1]
@@ -59,22 +66,25 @@ class window(tk.Tk):
 		items = get_info(dir1)
 		file1_dir = items[0]
 		file1_name = items[1]
+		self.transport_files(file1_dir, file1_name, wd)
 
 		items = get_info(dir2)
-		file2_dir = items[0]
+		file2_dir = items[0] 
 		file2_name = items[1]
+		self.transport_files(file2_dir, file2_name, wd)
 
 		command1 = ffmpeg + ' -i ' + file1_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium1.ts'
 		command2 = ffmpeg + ' -i ' + file2_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium2.ts'
 		join_command = ffmpeg + ' -i "concat:medium1.ts|medium2.ts" -c copy -bsf:a aac_adtstoasc ' + output_name + '.mp4'
 
-		os.chdir('C:\\Users\\Jscull\\Documents\\VidJoin')
-		print('Command 1: {}.'.format(command1))
-		print('Command 2: {}.'.format(command2))
-		print('Command 3: {}.'.format(join_command))
+		os.chdir( wd )
 		subprocess.call(command1)
 		subprocess.call(command2)
 		subprocess.call(join_command)
+
+	def transport_files(self, file_dir, file_name, destination):
+		os.chdir(file_dir)
+		copy(file_name, destination)
 
 	def get_info(dir):
 		path = ''
@@ -90,5 +100,11 @@ class window(tk.Tk):
 		items = [path, file_name]
 		return items
 
+def run_app():
+	app = window()
+	app.title('VidJoin')
+	app.resizable(False, False)
+	app.mainloop()
+
 if __name__ == '__main__':
-	
+	run_app()
