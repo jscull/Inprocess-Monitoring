@@ -27,8 +27,13 @@ class window(tk.Tk):
 		self.button_two = ttk.Button(self, text='...', command=lambda pk=2: self.get_dir(pk))
 		self.button_two.grid(row=1, column=2, padx=2, pady=5)
 
+		l = ttk.Label(self, text='New Name: ')
+		l.grid(row=2, column=0, padx=2, pady=5)
+		self.entry_three = ttk.Entry(self, width=50)
+		self.entry_three.grid(row=2, column=1, padx=2, pady=5)
+
 		self.run = ttk.Button(self, text='Join Videos', command=self.main)
-		self.run.grid(row=2, column=1, padx=2, pady=5)
+		self.run.grid(row=2, column=2, padx=2, pady=5)
 
 	def get_dir(self, pk):
 		directory = tk.filedialog.askopenfile()
@@ -53,7 +58,7 @@ class window(tk.Tk):
 		if os.path.exists(wd) is False:
 			os.mkdir(wd)
 
-		output_name = outname
+		output_name = self.entry_three.get()
 
 		ffmpegdir = 'C:\\Program Files\\FFMPEG'
 		if os.path.exists(ffmpegdir) is False:
@@ -63,12 +68,12 @@ class window(tk.Tk):
 		file1_name = dir1.split('\\')[-1]
 		file2_name = dir2.split('\\')[-1]
 		
-		items = get_info(dir1)
+		items = self.get_info(dir1)
 		file1_dir = items[0]
 		file1_name = items[1]
 		self.transport_files(file1_dir, file1_name, wd)
 
-		items = get_info(dir2)
+		items = self.get_info(dir2)
 		file2_dir = items[0] 
 		file2_name = items[1]
 		self.transport_files(file2_dir, file2_name, wd)
@@ -86,7 +91,7 @@ class window(tk.Tk):
 		os.chdir(file_dir)
 		copy(file_name, destination)
 
-	def get_info(dir):
+	def get_info(self, dir):
 		path = ''
 		file_name = ''
 		dir_split = dir.split('\\')

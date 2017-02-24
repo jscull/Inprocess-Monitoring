@@ -1,4 +1,7 @@
-def main(dir1, dir2):
+import os, re
+import subprocess
+
+def main(dir1, dir2, outname):
 		output_name = outname
 		ffmpeg = "C:\\Program Files\\FFMPEG\\bin\\ffmpeg.exe"
 		#command  = 'copy /b "{}" + "{}" {}.mp4'.format(dir1, dir2, output_name)
@@ -26,19 +29,19 @@ def main(dir1, dir2):
 		subprocess.call(command2)
 		subprocess.call(join_command)
 
-	def get_info(dir):
-		path = ''
-		file_name = ''
-		dir_split = dir.split('\\')
-		print('Dir_split: {}.'.format(dir_split))
-		for count, segment in enumerate(dir_split):
-			print('Segment: {}'.format(segment))
-			if count == len(dir_split)-1:
-				file_name = segment
-			else:
-				path += segment
-		items = [path, file_name]
-		return items
+def get_info(dir):
+	path = ''
+	file_name = ''
+	dir_split = dir.split('\\')
+	print('Dir_split: {}.'.format(dir_split))
+	for count, segment in enumerate(dir_split):
+		print('Segment: {}'.format(segment))
+		if count == len(dir_split)-1:
+			file_name = segment
+		else:
+			path += segment
+	items = [path, file_name]
+	return items
 
 if __name__ == '__main__':
-	main()
+	main('C\\B00237_EOL', 'C\\B00237_EOL_1', 'B00237_EOL')
