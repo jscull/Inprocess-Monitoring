@@ -51,8 +51,7 @@ class window(tk.Tk):
 		# MOVE THE FILE TO THE VIDJOIN DIR AND TRY TO PURGE ALL TEMP FILE AFTER JOIN
 
 	def main(self):
-		dir1 = self.entry_one.get()
-		dir2 = self.entry_two.get()
+		dirs = [self.get_info(self.entry_one.get()), self.get_info(self.entry_two.get())] 
 
 		wd = os.path.expanduser('~\Documents\VidJoin')
 		if os.path.exists(wd) is False:
@@ -65,21 +64,25 @@ class window(tk.Tk):
 			print('FFMPEG Not detected, please install and place into Program Files to get this to work.\nExample: {}.'.format(ffmpegdir))
 		ffmpeg = "C:\\Program Files\\FFMPEG\\bin\\ffmpeg.exe"
 
-		file1_name = dir1.split('\\')[-1]
-		file2_name = dir2.split('\\')[-1]
+		for _dir in dirs:
+			self.meddir(_dir, wd)
+
+		# file1_name = dir1.split('\\')[-1]
+		# file2_name = dir2.split('\\')[-1]
 		
-		items = self.get_info(dir1)
-		file1_dir = items[0]
-		file1_name = items[1]
-		self.transport_files(file1_dir, file1_name, wd)
+		# items = self.get_info(dir1)
+		# file1_dir = items[0]
+		# file1_name = items[1]
+		# self.transport_files(file1_dir, file1_name, wd)
 
-		items = self.get_info(dir2)
-		file2_dir = items[0] 
-		file2_name = items[1]
-		self.transport_files(file2_dir, file2_name, wd)
+		# items = self.get_info(dir2)
+		# file2_dir = items[0] 
+		# file2_name = items[1]
+		# self.transport_files(file2_dir, file2_name, wd)
 
-		command1 = ffmpeg + ' -i ' + file1_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium1.ts'
-		command2 = ffmpeg + ' -i ' + file2_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium2.ts'
+		# command1 = ffmpeg + ' -i ' + file1_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium1.ts'
+		# command2 = ffmpeg + ' -i ' + file2_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium2.ts'
+		
 		join_command = ffmpeg + ' -i "concat:medium1.ts|medium2.ts" -c copy -bsf:a aac_adtstoasc ' + output_name + '.mp4'
 
 		os.chdir( wd )
@@ -104,6 +107,23 @@ class window(tk.Tk):
 				path += segment
 		items = [path, file_name]
 		return items
+
+	def meddir(self, file_info, wd, medium_num=0):
+		medium_num = 0 
+		medium_nums_used = []
+		fdir = file_info[0]
+		file_name = file_info[1]
+		self.transport_files(fdir, file_name, wd)
+		if os.path.is_file(wd + medium_num):
+			medium_num += 1
+			self.meddir(file_info, wd, medium_num)
+		else:
+			command1 = ffmpeg + ' -i ' + file_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium{}.ts'.format(medium_num)
+			medium_nums_used.append(medium_num)
+			return medium_nums_used
+
+
+
 
 def run_app():
 	app = window()
