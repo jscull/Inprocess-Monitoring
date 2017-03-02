@@ -82,7 +82,7 @@ class window(tk.Tk):
 
 		# command1 = ffmpeg + ' -i ' + file1_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium1.ts'
 		# command2 = ffmpeg + ' -i ' + file2_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium2.ts'
-		
+
 		join_command = ffmpeg + ' -i "concat:medium1.ts|medium2.ts" -c copy -bsf:a aac_adtstoasc ' + output_name + '.mp4'
 
 		os.chdir( wd )
@@ -121,9 +121,6 @@ class window(tk.Tk):
 			command1 = ffmpeg + ' -i ' + file_name + ' -c copy -bsf:v h264_mp4toannexb -f mpegts medium{}.ts'.format(medium_num)
 			medium_nums_used.append(medium_num)
 			return medium_nums_used
-
-
-
 
 def run_app():
 	app = window()
